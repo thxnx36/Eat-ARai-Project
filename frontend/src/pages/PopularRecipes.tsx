@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
     Container, 
     Typography, 
@@ -11,7 +11,8 @@ import {
     IconButton,
     Card,
     CardContent,
-    CardMedia
+    CardMedia,
+    Chip
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -20,6 +21,7 @@ import RamenDiningIcon from '@mui/icons-material/RamenDining';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import CoolIcon from '@mui/icons-material/AcUnit';
 import { keyframes } from '@mui/system';
+import axios from 'axios';
 
 // สร้าง animation effects
 const float = keyframes`
@@ -67,115 +69,259 @@ function TabPanel(props: TabPanelProps) {
 }
 
 interface Recipe {
-    id: string;
+    id: number;
     name: string;
     description: string;
-    image: string;
+    image_path: string;
+    category: string;
+    ingredients: { id: number; name: string; category: string }[];
 }
+
+const fallbackRecipes: Recipe[] = [
+    {
+        id: 1,
+        name: 'ข้าวผัดหมู',
+        description: 'ข้าวผัดหมูสูตรเด็ด รสชาติกลมกล่อม',
+        image_path: '/images/recipes/khao_pad_moo.jpg',
+        category: 'ข้าว',
+        ingredients: [
+            { id: 1, name: 'ข้าวสวย', category: 'ข้าว' },
+            { id: 2, name: 'หมูสับ', category: 'เนื้อสัตว์' },
+            { id: 3, name: 'ไข่ไก่', category: 'เนื้อสัตว์' },
+            { id: 4, name: 'กระเทียม', category: 'ผัก' },
+            { id: 5, name: 'หอมแดง', category: 'ผัก' },
+            { id: 6, name: 'ต้นหอม', category: 'ผัก' },
+            { id: 7, name: 'น้ำมันพืช', category: 'น้ำมัน' },
+            { id: 8, name: 'ซีอิ๊วขาว', category: 'เครื่องปรุงรส' },
+            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' },
+            { id: 10, name: 'พริกไทย', category: 'เครื่องเทศ' }
+        ]
+    },
+    {
+        id: 2,
+        name: 'ข้าวผัดกุ้ง',
+        description: 'ข้าวผัดกุ้งสด รสชาติอร่อย',
+        image_path: '/images/recipes/khao_pad_kung.jpg',
+        category: 'ข้าว',
+        ingredients: [
+            { id: 1, name: 'ข้าวสวย', category: 'ข้าว' },
+            { id: 11, name: 'กุ้งสด', category: 'เนื้อสัตว์' },
+            { id: 3, name: 'ไข่ไก่', category: 'เนื้อสัตว์' },
+            { id: 4, name: 'กระเทียม', category: 'ผัก' },
+            { id: 5, name: 'หอมแดง', category: 'ผัก' },
+            { id: 6, name: 'ต้นหอม', category: 'ผัก' },
+            { id: 7, name: 'น้ำมันพืช', category: 'น้ำมัน' },
+            { id: 8, name: 'ซีอิ๊วขาว', category: 'เครื่องปรุงรส' },
+            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' },
+            { id: 10, name: 'พริกไทย', category: 'เครื่องเทศ' }
+        ]
+    },
+    {
+        id: 3,
+        name: 'ข้าวผัดไก่',
+        description: 'ข้าวผัดไก่สูตรเด็ด',
+        image_path: '/images/recipes/khao_pad_kai.jpg',
+        category: 'ข้าว',
+        ingredients: [
+            { id: 1, name: 'ข้าวสวย', category: 'ข้าว' },
+            { id: 12, name: 'ไก่สับ', category: 'เนื้อสัตว์' },
+            { id: 3, name: 'ไข่ไก่', category: 'เนื้อสัตว์' },
+            { id: 4, name: 'กระเทียม', category: 'ผัก' },
+            { id: 5, name: 'หอมแดง', category: 'ผัก' },
+            { id: 6, name: 'ต้นหอม', category: 'ผัก' },
+            { id: 7, name: 'น้ำมันพืช', category: 'น้ำมัน' },
+            { id: 8, name: 'ซีอิ๊วขาว', category: 'เครื่องปรุงรส' },
+            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' },
+            { id: 10, name: 'พริกไทย', category: 'เครื่องเทศ' }
+        ]
+    },
+    {
+        id: 4,
+        name: 'ผัดไทย',
+        description: 'ผัดไทยสูตรต้นตำรับ',
+        image_path: '/images/recipes/pad_thai.jpg',
+        category: 'เส้น',
+        ingredients: [
+            { id: 13, name: 'เส้นผัดไทย', category: 'เส้น' },
+            { id: 14, name: 'ถั่วงอก', category: 'ผัก' },
+            { id: 15, name: 'ไชโป๊', category: 'ผัก' },
+            { id: 6, name: 'ต้นหอม', category: 'ผัก' },
+            { id: 16, name: 'ไข่', category: 'เนื้อสัตว์' },
+            { id: 17, name: 'กุ้งแห้ง', category: 'เนื้อสัตว์' },
+            { id: 18, name: 'เต้าหู้', category: 'โปรตีน' },
+            { id: 19, name: 'น้ำตาลปี๊บ', category: 'เครื่องปรุงรส' },
+            { id: 20, name: 'น้ำมะขามเปียก', category: 'เครื่องปรุงรส' },
+            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' }
+        ]
+    },
+    {
+        id: 5,
+        name: 'ก๋วยเตี๋ยวต้มยำ',
+        description: 'ก๋วยเตี๋ยวต้มยำรสจัด',
+        image_path: '/images/recipes/tom_yum_noodle.jpg',
+        category: 'เส้น',
+        ingredients: [
+            { id: 21, name: 'เส้นก๋วยเตี๋ยว', category: 'เส้น' },
+            { id: 11, name: 'กุ้งสด', category: 'เนื้อสัตว์' },
+            { id: 22, name: 'หมูสับ', category: 'เนื้อสัตว์' },
+            { id: 23, name: 'ผักบุ้ง', category: 'ผัก' },
+            { id: 24, name: 'พริกสด', category: 'ผัก' },
+            { id: 25, name: 'มะนาว', category: 'ผัก' },
+            { id: 26, name: 'น้ำพริกเผา', category: 'เครื่องปรุงรส' },
+            { id: 27, name: 'น้ำมะนาว', category: 'เครื่องปรุงรส' },
+            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' },
+            { id: 28, name: 'พริกป่น', category: 'เครื่องเทศ' }
+        ]
+    },
+    {
+        id: 6,
+        name: 'ส้มตำ',
+        description: 'ส้มตำไทยรสจัด',
+        image_path: '/images/recipes/som_tam.jpg',
+        category: 'เผ็ด',
+        ingredients: [
+            { id: 29, name: 'มะละกอ', category: 'ผัก' },
+            { id: 30, name: 'มะเขือเทศ', category: 'ผัก' },
+            { id: 31, name: 'ถั่วฝักยาว', category: 'ผัก' },
+            { id: 32, name: 'กระเทียม', category: 'ผัก' },
+            { id: 33, name: 'พริกสด', category: 'ผัก' },
+            { id: 34, name: 'มะนาว', category: 'ผัก' },
+            { id: 35, name: 'น้ำตาลปี๊บ', category: 'เครื่องปรุงรส' },
+            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' },
+            { id: 36, name: 'กะปิ', category: 'เครื่องปรุงรส' },
+            { id: 37, name: 'ปูเค็ม', category: 'เครื่องปรุงรส' }
+        ]
+    },
+    {
+        id: 7,
+        name: 'ต้มยำกุ้ง',
+        description: 'ต้มยำกุ้งรสจัด',
+        image_path: '/images/recipes/tom_yum_kung.jpg',
+        category: 'เผ็ด',
+        ingredients: [
+            { id: 11, name: 'กุ้งสด', category: 'เนื้อสัตว์' },
+            { id: 38, name: 'เห็ดฟาง', category: 'ผัก' },
+            { id: 39, name: 'ข่า', category: 'สมุนไพร' },
+            { id: 40, name: 'ตะไคร้', category: 'สมุนไพร' },
+            { id: 41, name: 'ใบมะกรูด', category: 'สมุนไพร' },
+            { id: 42, name: 'พริกขี้หนู', category: 'ผัก' },
+            { id: 43, name: 'น้ำพริกเผา', category: 'เครื่องปรุงรส' },
+            { id: 44, name: 'น้ำมะนาว', category: 'เครื่องปรุงรส' },
+            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' },
+            { id: 45, name: 'ผงปรุงรส', category: 'เครื่องปรุงรส' }
+        ]
+    },
+    {
+        id: 8,
+        name: 'แกงจืด',
+        description: 'แกงจืดรสกลมกล่อม',
+        image_path: '/images/recipes/kaeng_jeut.jpg',
+        category: 'ไม่เผ็ด',
+        ingredients: [
+            { id: 46, name: 'หมูบด', category: 'เนื้อสัตว์' },
+            { id: 47, name: 'เต้าหู้ไข่', category: 'โปรตีน' },
+            { id: 48, name: 'ผักกาดขาว', category: 'ผัก' },
+            { id: 49, name: 'แครอท', category: 'ผัก' },
+            { id: 50, name: 'ต้นหอม', category: 'ผัก' },
+            { id: 51, name: 'ผักชี', category: 'ผัก' },
+            { id: 52, name: 'กระเทียม', category: 'ผัก' },
+            { id: 53, name: 'รากผักชี', category: 'ผัก' },
+            { id: 54, name: 'ซีอิ๊วขาว', category: 'เครื่องปรุงรส' },
+            { id: 10, name: 'พริกไทย', category: 'เครื่องเทศ' }
+        ]
+    }
+];
 
 const PopularRecipes: React.FC = () => {
     const navigate = useNavigate();
     const [value, setValue] = React.useState(0);
+    const [recipes, setRecipes] = useState<Recipe[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetchPopularRecipes();
+    }, []);
+
+    const fetchPopularRecipes = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await axios.get('http://localhost:80/backend/api/popular_recipes.php');
+            console.log('API Response:', response.data);
+            
+            if (response.data && Array.isArray(response.data)) {
+                setRecipes(response.data);
+            } else if (response.data && response.data.data) {
+                setRecipes(response.data.data);
+            } else {
+                setRecipes(fallbackRecipes);
+            }
+        } catch (err) {
+            console.error('Error fetching popular recipes:', err);
+            setRecipes(fallbackRecipes);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
-    };
-
-    // ข้อมูลเมนูยอดฮิตแบ่งตามหมวดหมู่
-    const popularRecipes = {
-        rice: [
-            { id: 'khao-pad', name: 'ข้าวผัด', description: 'ข้าวผัดที่ทำง่ายและมีรสชาติอร่อย', image: '/images/khao-pad.jpg' },
-            { id: 'khao-mun-gai', name: 'ข้าวมันไก่', description: 'อาหารจานเดียวที่มีข้าวหุงกับน้ำมันไก่และไก่ต้ม', image: '/images/khao-mun-gai.jpg' },
-            { id: 'khao-ka-moo', name: 'ข้าวขาหมู', description: 'ข้าวราดขาหมูตุ๋นจนเปื่อยนุ่ม', image: '/images/khao-ka-moo.jpg' },
-            { id: 'khao-mun-gai-tod', name: 'ข้าวมันไก่ทอด', description: 'ข้าวมันไก่ที่เสิร์ฟคู่กับไก่ทอดกรอบ', image: '/images/khao-mun-gai-tod.jpg' },
-            { id: 'khao-pad-saparo', name: 'ข้าวผัดสะโพก', description: 'ข้าวผัดที่ใช้เนื้อสะโพกไก่เป็นส่วนประกอบ', image: '/images/khao-pad-saparo.jpg' },
-            { id: 'khao-pad-kai', name: 'ข้าวผัดไก่', description: 'ข้าวผัดที่ใช้เนื้อไก่เป็นส่วนประกอบ', image: '/images/khao-pad-kai.jpg' },
-            { id: 'khao-pad-moo', name: 'ข้าวผัดหมู', description: 'ข้าวผัดที่ใช้เนื้อหมูเป็นส่วนประกอบ', image: '/images/khao-pad-moo.jpg' },
-            { id: 'khao-pad-goong', name: 'ข้าวผัดกุ้ง', description: 'ข้าวผัดที่ใช้กุ้งเป็นส่วนประกอบ', image: '/images/khao-pad-goong.jpg' },
-            { id: 'khao-pad-poo', name: 'ข้าวผัดปู', description: 'ข้าวผัดที่ใช้เนื้อปูเป็นส่วนประกอบ', image: '/images/khao-pad-poo.jpg' },
-            { id: 'khao-pad-ka-prao', name: 'ข้าวผัดกะเพรา', description: 'ข้าวผัดที่ใช้ใบกะเพราเป็นส่วนประกอบ', image: '/images/khao-pad-ka-prao.jpg' }
-        ],
-        noodle: [
-            { id: 'pad-thai', name: 'ผัดไทย', description: 'อาหารจานเดียวที่คนทั่วโลกรู้จัก มีรสชาติกลมกล่อมทั้งเปรี้ยว หวาน เค็ม', image: '/images/pad-thai.jpg' },
-            { id: 'pad-see-ew', name: 'ผัดซีอิ๊ว', description: 'ผัดเส้นที่ใช้ซีอิ๊วเป็นเครื่องปรุงหลัก มีรสชาติกลมกล่อม', image: '/images/pad-see-ew.jpg' },
-            { id: 'khao-soi', name: 'ข้าวซอย', description: 'อาหารเหนือที่มีรสชาติเข้มข้นจากกะทิและเครื่องแกง', image: '/images/khao-soi.jpg' },
-            { id: 'ba-mee-moo-dang', name: 'บะหมี่หมูแดง', description: 'บะหมี่ที่เสิร์ฟคู่กับหมูแดง', image: '/images/ba-mee-moo-dang.jpg' },
-            { id: 'ba-mee-tom-yum', name: 'บะหมี่ต้มยำ', description: 'บะหมี่ที่ใช้เครื่องต้มยำเป็นส่วนประกอบ', image: '/images/ba-mee-tom-yum.jpg' },
-            { id: 'pad-woon-sen', name: 'ผัดวุ้นเส้น', description: 'ผัดที่ใช้วุ้นเส้นเป็นส่วนประกอบหลัก', image: '/images/pad-woon-sen.jpg' },
-            { id: 'pad-kee-mao', name: 'ผัดขี้เมา', description: 'ผัดเส้นที่มีรสชาติเผ็ดร้อน', image: '/images/pad-kee-mao.jpg' },
-            { id: 'pad-mama', name: 'ผัดมาม่า', description: 'ผัดที่ใช้บะหมี่กึ่งสำเร็จรูปเป็นส่วนประกอบ', image: '/images/pad-mama.jpg' },
-            { id: 'pad-sen-lek', name: 'ผัดเส้นเล็ก', description: 'ผัดที่ใช้เส้นเล็กเป็นส่วนประกอบ', image: '/images/pad-sen-lek.jpg' },
-            { id: 'pad-sen-yai', name: 'ผัดเส้นใหญ่', description: 'ผัดที่ใช้เส้นใหญ่เป็นส่วนประกอบ', image: '/images/pad-sen-yai.jpg' }
-        ],
-        spicy: [
-            { id: 'tom-yum', name: 'ต้มยำ', description: 'ซุปรสจัดจ้านที่ขึ้นชื่อของไทย มีรสเปรี้ยว เผ็ด เค็ม กลมกล่อม', image: '/images/tom-yum.jpg' },
-            { id: 'som-tum', name: 'ส้มตำ', description: 'สลัดไทยที่มีรสชาติเปรี้ยว เผ็ด เค็ม หวาน กลมกล่อม', image: '/images/som-tum.jpg' },
-            { id: 'larb', name: 'ลาบ', description: 'สลัดเนื้อสับแบบไทยอีสาน มีรสชาติเปรี้ยว เผ็ด เค็ม', image: '/images/larb.jpg' },
-            { id: 'pad-kra-pao', name: 'ผัดกะเพรา', description: 'เมนูยอดนิยมของคนไทย ใช้ใบกะเพราเป็นส่วนประกอบหลัก รสชาติเผ็ดร้อน', image: '/images/pad-kra-pao.jpg' },
-            { id: 'green-curry', name: 'แกงเขียวหวาน', description: 'แกงไทยที่มีรสชาติเข้มข้นจากพริกแกงเขียวหวานและกะทิ', image: '/images/green-curry.jpg' },
-            { id: 'massaman-curry', name: 'แกงมัสมั่น', description: 'แกงไทยที่มีอิทธิพลจากอาหารมุสลิม มีรสชาติเข้มข้นและกลมกล่อม', image: '/images/massaman-curry.jpg' },
-            { id: 'pad-prik-king', name: 'ผัดพริกแกง', description: 'ผัดที่ใช้พริกแกงเป็นเครื่องปรุงหลัก มีรสชาติเผ็ดร้อน', image: '/images/pad-prik-king.jpg' },
-            { id: 'tom-kha', name: 'ต้มข่าไก่', description: 'ซุปที่มีรสชาติกลมกล่อมจากกะทิและข่า', image: '/images/tom-kha.jpg' },
-            { id: 'pad-prik-pao', name: 'ผัดพริกเผา', description: 'ผัดที่ใช้พริกเผาเป็นเครื่องปรุงหลัก', image: '/images/pad-prik-pao.jpg' },
-            { id: 'pad-ma-kheua-yao', name: 'ผัดมะเขือยาว', description: 'ผัดมะเขือยาวที่มีรสชาติกลมกล่อม', image: '/images/pad-ma-kheua-yao.jpg' }
-        ],
-        mild: [
-            { id: 'pad-pak-bung', name: 'ผัดผักบุ้ง', description: 'ผัดผักที่ทำง่ายและมีรสชาติอร่อย', image: '/images/pad-pak-bung.jpg' },
-            { id: 'pad-pak-ruam', name: 'ผัดผักรวม', description: 'ผัดผักรวมที่มีผักหลากหลายชนิด', image: '/images/pad-pak-ruam.jpg' },
-            { id: 'khao-tom', name: 'ข้าวต้ม', description: 'อาหารอ่อนย่อยง่าย เหมาะสำหรับคนป่วย', image: '/images/khao-tom.jpg' },
-            { id: 'khao-man-gai', name: 'ข้าวมันไก่', description: 'อาหารจานเดียวที่มีข้าวหุงกับน้ำมันไก่และไก่ต้ม', image: '/images/khao-man-gai.jpg' },
-            { id: 'khao-mun-gai', name: 'ข้าวมันไก่', description: 'อาหารจานเดียวที่มีข้าวหุงกับน้ำมันไก่และไก่ต้ม', image: '/images/khao-mun-gai.jpg' },
-            { id: 'khao-pad-kai', name: 'ข้าวผัดไก่', description: 'ข้าวผัดที่ใช้เนื้อไก่เป็นส่วนประกอบ', image: '/images/khao-pad-kai.jpg' },
-            { id: 'khao-pad-moo', name: 'ข้าวผัดหมู', description: 'ข้าวผัดที่ใช้เนื้อหมูเป็นส่วนประกอบ', image: '/images/khao-pad-moo.jpg' },
-            { id: 'khao-pad-goong', name: 'ข้าวผัดกุ้ง', description: 'ข้าวผัดที่ใช้กุ้งเป็นส่วนประกอบ', image: '/images/khao-pad-goong.jpg' },
-            { id: 'khao-pad-poo', name: 'ข้าวผัดปู', description: 'ข้าวผัดที่ใช้เนื้อปูเป็นส่วนประกอบ', image: '/images/khao-pad-poo.jpg' },
-            { id: 'khao-pad-ka-prao', name: 'ข้าวผัดกะเพรา', description: 'ข้าวผัดที่ใช้ใบกะเพราเป็นส่วนประกอบ', image: '/images/khao-pad-ka-prao.jpg' }
-        ]
     };
 
     const tabIcons = [
         { 
             icon: <RiceBowlIcon />, 
             label: 'เมนูข้าว', 
+            category: 'ข้าว',
             gradient: 'linear-gradient(135deg, #FF9800 0%, #FFB74D 100%)',
             color: '#FF9800'
         },
         { 
             icon: <RamenDiningIcon />, 
             label: 'เมนูเส้น', 
+            category: 'เส้น',
             gradient: 'linear-gradient(135deg, #4CAF50 0%, #81C784 100%)',
             color: '#4CAF50'
         },
         { 
             icon: <LocalFireDepartmentIcon />, 
             label: 'เมนูเผ็ด', 
+            category: 'เผ็ด',
             gradient: 'linear-gradient(135deg, #F44336 0%, #E57373 100%)',
             color: '#F44336'
         },
         { 
             icon: <CoolIcon />, 
             label: 'เมนูไม่เผ็ด', 
+            category: 'ไม่เผ็ด',
             gradient: 'linear-gradient(135deg, #2196F3 0%, #64B5F6 100%)',
             color: '#2196F3'
         }
     ];
 
     const getCurrentRecipes = (): Recipe[] => {
-        switch (value) {
-            case 0:
-                return popularRecipes.rice;
-            case 1:
-                return popularRecipes.noodle;
-            case 2:
-                return popularRecipes.spicy;
-            case 3:
-                return popularRecipes.mild;
-            default:
-                return [];
-        }
+        const category = tabIcons[value].category;
+        return recipes.filter(recipe => recipe.category === category);
     };
 
     const currentRecipes = getCurrentRecipes();
+
+    if (loading) {
+        return (
+            <Container maxWidth="lg" sx={{ mt: '64px', textAlign: 'center', py: 4 }}>
+                <Typography>กำลังโหลดข้อมูล...</Typography>
+            </Container>
+        );
+    }
+
+    if (error) {
+        return (
+            <Container maxWidth="lg" sx={{ mt: '64px', textAlign: 'center', py: 4 }}>
+                <Typography color="error">{error}</Typography>
+            </Container>
+        );
+    }
 
     return (
         <Container maxWidth="lg" sx={{ mt: '64px' }}>
@@ -251,68 +397,101 @@ const PopularRecipes: React.FC = () => {
 
                 <Grid container spacing={2}>
                     {currentRecipes.map((recipe) => (
-                        <Grid item xs={12} sm={6} md={4} key={recipe.id}>
-                            <Card
-                                elevation={0}
-                                sx={{
+                        <Grid item xs={12} sm={6} key={recipe.id}>
+                            <Card 
+                                sx={{ 
                                     height: '100%',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    borderRadius: 2,
-                                    border: '1px solid #FFE8E8',
+                                    borderRadius: 3,
                                     overflow: 'hidden',
+                                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
                                     transition: 'all 0.3s ease',
                                     '&:hover': {
-                                        transform: 'translateY(-8px)',
-                                        boxShadow: '0 8px 16px rgba(224,52,52,0.1)',
+                                        transform: 'translateY(-5px)',
+                                        boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)'
                                     }
                                 }}
                             >
-                                <CardMedia
-                                    component="img"
-                                    height="200"
-                                    image={recipe.image}
-                                    alt={recipe.name}
-                                    sx={{
-                                        objectFit: 'cover'
-                                    }}
-                                />
-                                <CardContent sx={{ flexGrow: 1, p: 2 }}>
-                                    <Typography
-                                        variant="h6"
-                                        sx={{
+                                <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                                    <Typography 
+                                        gutterBottom 
+                                        variant="h5" 
+                                        component="h2" 
+                                        sx={{ 
                                             fontWeight: 'bold',
                                             color: '#e03434',
-                                            mb: 1
+                                            mb: 2
                                         }}
                                     >
                                         {recipe.name}
                                     </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            color: '#666',
+                                    <Box>
+                                        <Typography 
+                                            variant="subtitle2" 
+                                            sx={{ 
+                                                color: '#666',
+                                                mb: 1,
+                                                fontWeight: 'bold'
+                                            }}
+                                        >
+                                            วัตถุดิบหลัก:
+                                        </Typography>
+                                        <Box sx={{ 
+                                            display: 'flex', 
+                                            flexWrap: 'wrap', 
+                                            gap: 1,
                                             mb: 2
-                                        }}
-                                    >
-                                        {recipe.description}
-                                    </Typography>
+                                        }}>
+                                            {recipe.ingredients
+                                                .filter(ingredient => 
+                                                    !['เครื่องปรุงรส', 'เครื่องเทศ', 'น้ำมัน', 'น้ำ'].includes(ingredient.category)
+                                                )
+                                                .map((ingredient, index) => (
+                                                    <Chip
+                                                        key={`${ingredient.id}-${index}`}
+                                                        label={ingredient.name}
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: 'rgba(224, 52, 52, 0.1)',
+                                                            color: '#e03434'
+                                                        }}
+                                                    />
+                                                ))}
+                                        </Box>
+                                        <Typography 
+                                            variant="subtitle2" 
+                                            sx={{ 
+                                                color: '#666',
+                                                mb: 1,
+                                                fontWeight: 'bold'
+                                            }}
+                                        >
+                                            วัตถุดิบเสริม:
+                                        </Typography>
+                                        <Box sx={{ 
+                                            display: 'flex', 
+                                            flexWrap: 'wrap', 
+                                            gap: 1 
+                                        }}>
+                                            {recipe.ingredients
+                                                .filter(ingredient => 
+                                                    ['เครื่องปรุงรส', 'เครื่องเทศ', 'น้ำมัน', 'น้ำ'].includes(ingredient.category)
+                                                )
+                                                .map((ingredient, index) => (
+                                                    <Chip
+                                                        key={`${ingredient.id}-${index}`}
+                                                        label={ingredient.name}
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: 'rgba(224, 52, 52, 0.1)',
+                                                            color: '#666'
+                                                        }}
+                                                    />
+                                                ))}
+                                        </Box>
+                                    </Box>
                                 </CardContent>
-                                <Box sx={{ p: 2, pt: 0 }}>
-                                    <Button
-                                        fullWidth
-                                        variant="contained"
-                                        sx={{
-                                            backgroundColor: '#e03434',
-                                            color: 'white',
-                                            '&:hover': {
-                                                backgroundColor: '#FF407A'
-                                            }
-                                        }}
-                                    >
-                                        ดูสูตรอาหาร
-                                    </Button>
-                                </Box>
                             </Card>
                         </Grid>
                     ))}

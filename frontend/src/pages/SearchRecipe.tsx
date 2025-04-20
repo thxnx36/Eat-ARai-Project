@@ -39,8 +39,12 @@ const fadeIn = keyframes`
     to { opacity: 1; transform: translateY(0); }
 `;
 
-interface LocalRecipe extends ApiRecipe {
-    ingredients: string[];
+interface LocalRecipe {
+    id: number;
+    name: string;
+    description: string;
+    image_path: string;
+    ingredients: ApiIngredient[];
 }
 
 interface CategoryItem {
@@ -117,10 +121,43 @@ const SearchRecipe: React.FC = () => {
             const selectedIds = selectedItems.map(id => id);
             console.log('Selected ingredient IDs:', selectedIds);
             
-            const recipes = await api.searchRecipesByIngredients(selectedIds);
-            console.log('Received recipes:', recipes);
+            const allRecipes = await api.searchRecipesByIngredients(selectedIds);
+            console.log('All recipes:', allRecipes);
             
-            setRecipes(recipes);
+            // กรองเมนูที่สามารถทำได้จากวัตถุดิบที่เลือก
+            const filteredRecipes = allRecipes.filter(recipe => {
+                // แปลงชื่อวัตถุดิบในเมนูเป็น ID และแยกเป็นวัตถุดิบหลักกับเครื่องปรุง
+                const mainIngredientIds = recipe.ingredients
+                    .map(ingName => {
+                        const ingredient = ingredients.find(i => i.name === ingName);
+                        return ingredient && !['เครื่องปรุงรส', 'เครื่องเทศ', 'น้ำมัน', 'น้ำ'].includes(ingredient.category)
+                            ? ingredient.id 
+                            : null;
+                    })
+                    .filter((id): id is number => id !== null);
+
+                // เช็คว่าผู้ใช้มีวัตถุดิบครบทุกอย่างที่เมนูต้องการ
+                const hasAllRequiredIngredients = mainIngredientIds.every(id => selectedIds.includes(id));
+
+                return hasAllRequiredIngredients;
+            });
+            
+            console.log('Filtered recipes:', filteredRecipes);
+            setRecipes(filteredRecipes.map(recipe => {
+                // แปลงชื่อวัตถุดิบเป็นข้อมูลวัตถุดิบที่สมบูรณ์
+                const recipeIngredients = recipe.ingredients.map(ingName => {
+                    const ingredient = ingredients.find(i => i.name === ingName);
+                    if (!ingredient) {
+                        console.warn(`Ingredient not found: ${ingName}`);
+                    }
+                    return ingredient || { id: 0, name: ingName, category: '', icon: '' };
+                });
+
+                return {
+                    ...recipe,
+                    ingredients: recipeIngredients
+                };
+            }));
         } catch (error) {
             console.error('Error searching recipes:', error);
             setError('เกิดข้อผิดพลาดในการค้นหาเมนู');
@@ -279,19 +316,22 @@ const SearchRecipe: React.FC = () => {
                                                             onClick={() => handleItemClick(item.id)}
                                                             sx={{
                                                                 bgcolor: selectedItems.includes(item.id) 
-                                                                    ? 'linear-gradient(45deg, #e03434 30%, #ff6b6b 90%)'
+                                                                    ? '#e03434'
                                                                     : 'white',
-                                                                color: selectedItems.includes(item.id) ? 'white' : 'inherit',
+                                                                color: selectedItems.includes(item.id) ? 'white' : '#666',
                                                                 border: selectedItems.includes(item.id) 
                                                                     ? 'none' 
-                                                                    : '1px solid rgba(224, 52, 52, 0.5)',
+                                                                    : '1px solid #e0e0e0',
                                                                 '&:hover': {
                                                                     bgcolor: selectedItems.includes(item.id)
-                                                                        ? 'linear-gradient(45deg, #ff6b6b 30%, #ff8b8b 90%)'
+                                                                        ? '#ff4444'
                                                                         : 'rgba(224, 52, 52, 0.1)'
                                                                 },
                                                                 transition: 'all 0.3s ease',
-                                                                fontWeight: selectedItems.includes(item.id) ? 'bold' : 'normal'
+                                                                fontWeight: selectedItems.includes(item.id) ? 'bold' : 'normal',
+                                                                boxShadow: selectedItems.includes(item.id) 
+                                                                    ? '0 2px 8px rgba(224, 52, 52, 0.3)' 
+                                                                    : 'none'
                                                             }}
                                                         />
                                                     </Grid>
@@ -379,19 +419,6 @@ const SearchRecipe: React.FC = () => {
                                                 }
                                             }}
                                         >
-                                            <CardMedia
-                                                component="img"
-                                                height="200"
-                                                image={recipe.image_path}
-                                                alt={recipe.name}
-                                                sx={{ 
-                                                    objectFit: 'cover',
-                                                    transition: 'transform 0.3s ease',
-                                                    '&:hover': {
-                                                        transform: 'scale(1.05)'
-                                                    }
-                                                }}
-                                            />
                                             <CardContent sx={{ flexGrow: 1, p: 3 }}>
                                                 <Typography 
                                                     gutterBottom 
@@ -399,18 +426,11 @@ const SearchRecipe: React.FC = () => {
                                                     component="h2" 
                                                     sx={{ 
                                                         fontWeight: 'bold',
-                                                        color: '#e03434'
+                                                        color: '#e03434',
+                                                        mb: 2
                                                     }}
                                                 >
                                                     {recipe.name}
-                                                </Typography>
-                                                <Typography 
-                                                    variant="body2" 
-                                                    color="text.secondary" 
-                                                    paragraph
-                                                    sx={{ mb: 3 }}
-                                                >
-                                                    {recipe.description}
                                                 </Typography>
                                                 <Box>
                                                     <Typography 
@@ -421,28 +441,67 @@ const SearchRecipe: React.FC = () => {
                                                             fontWeight: 'bold'
                                                         }}
                                                     >
-                                                        วัตถุดิบที่ใช้:
+                                                        วัตถุดิบหลัก:
+                                                    </Typography>
+                                                    <Box sx={{ 
+                                                        display: 'flex', 
+                                                        flexWrap: 'wrap', 
+                                                        gap: 1,
+                                                        mb: 2
+                                                    }}>
+                                                        {recipe.ingredients
+                                                            .filter(ingredient => 
+                                                                ingredient && ingredient.category && 
+                                                                !['เครื่องปรุงรส', 'เครื่องเทศ', 'น้ำมัน', 'น้ำ'].includes(ingredient.category)
+                                                            )
+                                                            .map((ingredient, index) => (
+                                                                <Chip
+                                                                    key={`${ingredient.id}-${index}`}
+                                                                    label={ingredient.name}
+                                                                    size="small"
+                                                                    sx={{
+                                                                        bgcolor: selectedItems.includes(ingredient.id) 
+                                                                            ? '#e03434'
+                                                                            : 'rgba(224, 52, 52, 0.1)',
+                                                                        color: selectedItems.includes(ingredient.id) 
+                                                                            ? 'white' 
+                                                                            : '#e03434',
+                                                                        fontWeight: selectedItems.includes(ingredient.id) ? 'bold' : 'normal'
+                                                                    }}
+                                                                />
+                                                            ))}
+                                                    </Box>
+                                                    <Typography 
+                                                        variant="subtitle2" 
+                                                        sx={{ 
+                                                            color: '#666',
+                                                            mb: 1,
+                                                            fontWeight: 'bold'
+                                                        }}
+                                                    >
+                                                        วัตถุดิบเสริม:
                                                     </Typography>
                                                     <Box sx={{ 
                                                         display: 'flex', 
                                                         flexWrap: 'wrap', 
                                                         gap: 1 
                                                     }}>
-                                                        {recipe.ingredients.map((ingredient, index) => (
-                                                            <Chip
-                                                                key={index}
-                                                                label={ingredient}
-                                                                size="small"
-                                                                sx={{
-                                                                    bgcolor: 'rgba(224, 52, 52, 0.1)',
-                                                                    color: '#e03434',
-                                                                    fontWeight: 500,
-                                                                    '&:hover': {
-                                                                        bgcolor: 'rgba(224, 52, 52, 0.2)'
-                                                                    }
-                                                                }}
-                                                            />
-                                                        ))}
+                                                        {recipe.ingredients
+                                                            .filter(ingredient => 
+                                                                ingredient && ingredient.category && 
+                                                                ['เครื่องปรุงรส', 'เครื่องเทศ', 'น้ำมัน', 'น้ำ'].includes(ingredient.category)
+                                                            )
+                                                            .map((ingredient, index) => (
+                                                                <Chip
+                                                                    key={`${ingredient.id}-${index}`}
+                                                                    label={ingredient.name}
+                                                                    size="small"
+                                                                    sx={{
+                                                                        bgcolor: 'rgba(224, 52, 52, 0.1)',
+                                                                        color: '#666'
+                                                                    }}
+                                                                />
+                                                            ))}
                                                     </Box>
                                                 </Box>
                                             </CardContent>
