@@ -85,16 +85,16 @@ const fallbackRecipes: Recipe[] = [
         image_path: '/images/recipes/khao_pad_moo.jpg',
         category: 'ข้าว',
         ingredients: [
-            { id: 1, name: 'ข้าวสวย', category: 'ข้าว' },
-            { id: 2, name: 'หมูสับ', category: 'เนื้อสัตว์' },
-            { id: 3, name: 'ไข่ไก่', category: 'เนื้อสัตว์' },
-            { id: 4, name: 'กระเทียม', category: 'ผัก' },
-            { id: 5, name: 'หอมแดง', category: 'ผัก' },
-            { id: 6, name: 'ต้นหอม', category: 'ผัก' },
-            { id: 7, name: 'น้ำมันพืช', category: 'น้ำมัน' },
-            { id: 8, name: 'ซีอิ๊วขาว', category: 'เครื่องปรุงรส' },
-            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' },
-            { id: 10, name: 'พริกไทย', category: 'เครื่องเทศ' }
+            { id: 1, name: 'ข้าว', category: 'ข้าว' },
+            { id: 2, name: 'หมู', category: 'หมู' },
+            { id: 3, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 4, name: 'น้ำมัน', category: 'น้ำมัน' },
+            { id: 5, name: 'น้ำปลา', category: 'น้ำปลา' },
+            { id: 6, name: 'พริกไทย', category: 'เครื่องเทศ' },
+            { id: 7, name: 'กระเทียม', category: 'เครื่องเทศ' },
+            { id: 8, name: 'น้ำหอม', category: 'เครื่องเทศ' },
+            { id: 9, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 10, name: 'น้ำมัน', category: 'น้ำมัน' }
         ]
     },
     {
@@ -104,16 +104,16 @@ const fallbackRecipes: Recipe[] = [
         image_path: '/images/recipes/khao_pad_kung.jpg',
         category: 'ข้าว',
         ingredients: [
-            { id: 1, name: 'ข้าวสวย', category: 'ข้าว' },
-            { id: 11, name: 'กุ้งสด', category: 'เนื้อสัตว์' },
-            { id: 3, name: 'ไข่ไก่', category: 'เนื้อสัตว์' },
-            { id: 4, name: 'กระเทียม', category: 'ผัก' },
-            { id: 5, name: 'หอมแดง', category: 'ผัก' },
-            { id: 6, name: 'ต้นหอม', category: 'ผัก' },
-            { id: 7, name: 'น้ำมันพืช', category: 'น้ำมัน' },
-            { id: 8, name: 'ซีอิ๊วขาว', category: 'เครื่องปรุงรส' },
-            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' },
-            { id: 10, name: 'พริกไทย', category: 'เครื่องเทศ' }
+            { id: 11, name: 'ข้าว', category: 'ข้าว' },
+            { id: 12, name: 'กุ้ง', category: 'กุ้ง' },
+            { id: 13, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 14, name: 'น้ำมัน', category: 'น้ำมัน' },
+            { id: 15, name: 'น้ำปลา', category: 'น้ำปลา' },
+            { id: 16, name: 'พริกไทย', category: 'เครื่องเทศ' },
+            { id: 17, name: 'กระเทียม', category: 'เครื่องเทศ' },
+            { id: 18, name: 'น้ำหอม', category: 'เครื่องเทศ' },
+            { id: 19, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 20, name: 'น้ำมัน', category: 'น้ำมัน' }
         ]
     },
     {
@@ -123,16 +123,16 @@ const fallbackRecipes: Recipe[] = [
         image_path: '/images/recipes/khao_pad_kai.jpg',
         category: 'ข้าว',
         ingredients: [
-            { id: 1, name: 'ข้าวสวย', category: 'ข้าว' },
-            { id: 12, name: 'ไก่สับ', category: 'เนื้อสัตว์' },
-            { id: 3, name: 'ไข่ไก่', category: 'เนื้อสัตว์' },
-            { id: 4, name: 'กระเทียม', category: 'ผัก' },
-            { id: 5, name: 'หอมแดง', category: 'ผัก' },
-            { id: 6, name: 'ต้นหอม', category: 'ผัก' },
-            { id: 7, name: 'น้ำมันพืช', category: 'น้ำมัน' },
-            { id: 8, name: 'ซีอิ๊วขาว', category: 'เครื่องปรุงรส' },
-            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' },
-            { id: 10, name: 'พริกไทย', category: 'เครื่องเทศ' }
+            { id: 21, name: 'ข้าว', category: 'ข้าว' },
+            { id: 22, name: 'ไก่', category: 'ไก่' },
+            { id: 23, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 24, name: 'น้ำมัน', category: 'น้ำมัน' },
+            { id: 25, name: 'น้ำปลา', category: 'น้ำปลา' },
+            { id: 26, name: 'พริกไทย', category: 'เครื่องเทศ' },
+            { id: 27, name: 'กระเทียม', category: 'เครื่องเทศ' },
+            { id: 28, name: 'น้ำหอม', category: 'เครื่องเทศ' },
+            { id: 29, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 30, name: 'น้ำมัน', category: 'น้ำมัน' }
         ]
     },
     {
@@ -142,16 +142,16 @@ const fallbackRecipes: Recipe[] = [
         image_path: '/images/recipes/pad_thai.jpg',
         category: 'เส้น',
         ingredients: [
-            { id: 13, name: 'เส้นผัดไทย', category: 'เส้น' },
-            { id: 14, name: 'ถั่วงอก', category: 'ผัก' },
-            { id: 15, name: 'ไชโป๊', category: 'ผัก' },
-            { id: 6, name: 'ต้นหอม', category: 'ผัก' },
-            { id: 16, name: 'ไข่', category: 'เนื้อสัตว์' },
-            { id: 17, name: 'กุ้งแห้ง', category: 'เนื้อสัตว์' },
-            { id: 18, name: 'เต้าหู้', category: 'โปรตีน' },
-            { id: 19, name: 'น้ำตาลปี๊บ', category: 'เครื่องปรุงรส' },
-            { id: 20, name: 'น้ำมะขามเปียก', category: 'เครื่องปรุงรส' },
-            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' }
+            { id: 31, name: 'เส้นหมู', category: 'เส้น' },
+            { id: 32, name: 'หมู', category: 'หมู' },
+            { id: 33, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 34, name: 'น้ำมัน', category: 'น้ำมัน' },
+            { id: 35, name: 'น้ำปลา', category: 'น้ำปลา' },
+            { id: 36, name: 'พริกไทย', category: 'เครื่องเทศ' },
+            { id: 37, name: 'กระเทียม', category: 'เครื่องเทศ' },
+            { id: 38, name: 'น้ำหอม', category: 'เครื่องเทศ' },
+            { id: 39, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 40, name: 'น้ำมัน', category: 'น้ำมัน' }
         ]
     },
     {
@@ -161,16 +161,16 @@ const fallbackRecipes: Recipe[] = [
         image_path: '/images/recipes/tom_yum_noodle.jpg',
         category: 'เส้น',
         ingredients: [
-            { id: 21, name: 'เส้นก๋วยเตี๋ยว', category: 'เส้น' },
-            { id: 11, name: 'กุ้งสด', category: 'เนื้อสัตว์' },
-            { id: 22, name: 'หมูสับ', category: 'เนื้อสัตว์' },
-            { id: 23, name: 'ผักบุ้ง', category: 'ผัก' },
-            { id: 24, name: 'พริกสด', category: 'ผัก' },
-            { id: 25, name: 'มะนาว', category: 'ผัก' },
-            { id: 26, name: 'น้ำพริกเผา', category: 'เครื่องปรุงรส' },
-            { id: 27, name: 'น้ำมะนาว', category: 'เครื่องปรุงรส' },
-            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' },
-            { id: 28, name: 'พริกป่น', category: 'เครื่องเทศ' }
+            { id: 41, name: 'เส้นก๋วยเตี๋ยว', category: 'เส้น' },
+            { id: 42, name: 'กุ้ง', category: 'กุ้ง' },
+            { id: 43, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 44, name: 'น้ำมัน', category: 'น้ำมัน' },
+            { id: 45, name: 'น้ำปลา', category: 'น้ำปลา' },
+            { id: 46, name: 'พริกไทย', category: 'เครื่องเทศ' },
+            { id: 47, name: 'กระเทียม', category: 'เครื่องเทศ' },
+            { id: 48, name: 'น้ำหอม', category: 'เครื่องเทศ' },
+            { id: 49, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 50, name: 'น้ำมัน', category: 'น้ำมัน' }
         ]
     },
     {
@@ -180,16 +180,14 @@ const fallbackRecipes: Recipe[] = [
         image_path: '/images/recipes/som_tam.jpg',
         category: 'เผ็ด',
         ingredients: [
-            { id: 29, name: 'มะละกอ', category: 'ผัก' },
-            { id: 30, name: 'มะเขือเทศ', category: 'ผัก' },
-            { id: 31, name: 'ถั่วฝักยาว', category: 'ผัก' },
-            { id: 32, name: 'กระเทียม', category: 'ผัก' },
-            { id: 33, name: 'พริกสด', category: 'ผัก' },
-            { id: 34, name: 'มะนาว', category: 'ผัก' },
-            { id: 35, name: 'น้ำตาลปี๊บ', category: 'เครื่องปรุงรส' },
-            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' },
-            { id: 36, name: 'กะปิ', category: 'เครื่องปรุงรส' },
-            { id: 37, name: 'ปูเค็ม', category: 'เครื่องปรุงรส' }
+            { id: 51, name: 'ส้ม', category: 'ส้ม' },
+            { id: 52, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 53, name: 'น้ำมัน', category: 'น้ำมัน' },
+            { id: 54, name: 'พริกไทย', category: 'เครื่องเทศ' },
+            { id: 55, name: 'กระเทียม', category: 'เครื่องเทศ' },
+            { id: 56, name: 'น้ำหอม', category: 'เครื่องเทศ' },
+            { id: 57, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 58, name: 'น้ำมัน', category: 'น้ำมัน' }
         ]
     },
     {
@@ -199,16 +197,14 @@ const fallbackRecipes: Recipe[] = [
         image_path: '/images/recipes/tom_yum_kung.jpg',
         category: 'เผ็ด',
         ingredients: [
-            { id: 11, name: 'กุ้งสด', category: 'เนื้อสัตว์' },
-            { id: 38, name: 'เห็ดฟาง', category: 'ผัก' },
-            { id: 39, name: 'ข่า', category: 'สมุนไพร' },
-            { id: 40, name: 'ตะไคร้', category: 'สมุนไพร' },
-            { id: 41, name: 'ใบมะกรูด', category: 'สมุนไพร' },
-            { id: 42, name: 'พริกขี้หนู', category: 'ผัก' },
-            { id: 43, name: 'น้ำพริกเผา', category: 'เครื่องปรุงรส' },
-            { id: 44, name: 'น้ำมะนาว', category: 'เครื่องปรุงรส' },
-            { id: 9, name: 'น้ำปลา', category: 'เครื่องปรุงรส' },
-            { id: 45, name: 'ผงปรุงรส', category: 'เครื่องปรุงรส' }
+            { id: 59, name: 'กุ้ง', category: 'กุ้ง' },
+            { id: 60, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 61, name: 'น้ำมัน', category: 'น้ำมัน' },
+            { id: 62, name: 'พริกไทย', category: 'เครื่องเทศ' },
+            { id: 63, name: 'กระเทียม', category: 'เครื่องเทศ' },
+            { id: 64, name: 'น้ำหอม', category: 'เครื่องเทศ' },
+            { id: 65, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 66, name: 'น้ำมัน', category: 'น้ำมัน' }
         ]
     },
     {
@@ -218,16 +214,14 @@ const fallbackRecipes: Recipe[] = [
         image_path: '/images/recipes/kaeng_jeut.jpg',
         category: 'ไม่เผ็ด',
         ingredients: [
-            { id: 46, name: 'หมูบด', category: 'เนื้อสัตว์' },
-            { id: 47, name: 'เต้าหู้ไข่', category: 'โปรตีน' },
-            { id: 48, name: 'ผักกาดขาว', category: 'ผัก' },
-            { id: 49, name: 'แครอท', category: 'ผัก' },
-            { id: 50, name: 'ต้นหอม', category: 'ผัก' },
-            { id: 51, name: 'ผักชี', category: 'ผัก' },
-            { id: 52, name: 'กระเทียม', category: 'ผัก' },
-            { id: 53, name: 'รากผักชี', category: 'ผัก' },
-            { id: 54, name: 'ซีอิ๊วขาว', category: 'เครื่องปรุงรส' },
-            { id: 10, name: 'พริกไทย', category: 'เครื่องเทศ' }
+            { id: 67, name: 'หมู', category: 'หมู' },
+            { id: 68, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 69, name: 'น้ำมัน', category: 'น้ำมัน' },
+            { id: 70, name: 'พริกไทย', category: 'เครื่องเทศ' },
+            { id: 71, name: 'กระเทียม', category: 'เครื่องเทศ' },
+            { id: 72, name: 'น้ำหอม', category: 'เครื่องเทศ' },
+            { id: 73, name: 'น้ำตาล', category: 'เครื่องปรุงรส' },
+            { id: 74, name: 'น้ำมัน', category: 'น้ำมัน' }
         ]
     }
 ];
@@ -248,7 +242,6 @@ const PopularRecipes: React.FC = () => {
             setLoading(true);
             setError(null);
             const response = await axios.get('http://localhost:80/backend/api/popular_recipes.php');
-            console.log('API Response:', response.data);
             
             if (response.data && Array.isArray(response.data)) {
                 setRecipes(response.data);

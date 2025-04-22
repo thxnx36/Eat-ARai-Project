@@ -73,7 +73,6 @@ const SearchRecipe: React.FC = () => {
                 setLoading(true);
                 setError(null);
                 const data = await api.getIngredients();
-                console.log('Received ingredients data:', data);
                 
                 if (!data) {
                     throw new Error('No data received from API');
@@ -119,10 +118,8 @@ const SearchRecipe: React.FC = () => {
             setLoading(true);
             setError(null);
             const selectedIds = selectedItems.map(id => id);
-            console.log('Selected ingredient IDs:', selectedIds);
             
             const allRecipes = await api.searchRecipesByIngredients(selectedIds);
-            console.log('All recipes:', allRecipes);
             
             // กรองเมนูที่สามารถทำได้จากวัตถุดิบที่เลือก
             const filteredRecipes = allRecipes.filter(recipe => {
@@ -142,7 +139,6 @@ const SearchRecipe: React.FC = () => {
                 return hasAllRequiredIngredients;
             });
             
-            console.log('Filtered recipes:', filteredRecipes);
             setRecipes(filteredRecipes.map(recipe => {
                 // แปลงชื่อวัตถุดิบเป็นข้อมูลวัตถุดิบที่สมบูรณ์
                 const recipeIngredients = recipe.ingredients.map(ingName => {
@@ -257,7 +253,7 @@ const SearchRecipe: React.FC = () => {
                             color: '#e03434'
                         }}
                     >
-                        ของในตู้เย็นของฉัน 🧊
+                        ของในตู้เย็นของฉัน
                     </Typography>
                 </Box>
 
